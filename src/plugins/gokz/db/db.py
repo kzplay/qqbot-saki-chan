@@ -3,7 +3,6 @@ import urllib.parse
 
 from dotenv import load_dotenv
 from sqlmodel import SQLModel, create_engine
-from . import models
 
 load_dotenv()
 

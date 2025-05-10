@@ -4,7 +4,7 @@ from sqlmodel import Field, SQLModel, Column, DateTime, func
 
 
 class User(SQLModel, table=True):
-    __tablename__ = 'qq_users'
+    __tablename__ = 'qqbot_users'
     qid: str = Field(nullable=False, primary_key=True)
     name: str
     steamid: str = Field(nullable=False)

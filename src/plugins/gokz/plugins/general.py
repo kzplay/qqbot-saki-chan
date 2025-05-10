@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from textwrap import dedent
 
 from nonebot import on_command
@@ -23,8 +24,8 @@ help_ = on_command('help', aliases={"帮助"})
 
 @help_.handle()
 async def _():
-    # image_path = Path('data/gokz/help.png')
-    await help_.send(MessageSegment.image('data/gokz/help.png'))
+    image_path = Path('data/gokz/help.png')
+    await help_.finish(MessageSegment.file_image(image_path))
 
 
 @bind.handle()
