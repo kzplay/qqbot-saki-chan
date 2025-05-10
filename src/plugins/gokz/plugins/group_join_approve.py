@@ -9,9 +9,9 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupRequestEvent
 from nonebot.adapters.onebot.v11.message import MessageSegment
 
-from ..database.deps import SessionDep
-from ..database.models import User
-from ..utils.steam_user import convert_steamid
+from ..db.deps import SessionDep
+from ..db.models import User
+from src.plugins.gokz.core.steam_user import convert_steamid
 
 join_group = on_request(
     priority=1,

@@ -1,6 +1,6 @@
 import difflib
 
-from src.plugins.gokz.utils.config import MAP_TIERS
+from src.plugins.gokz.core.config import MAP_TIERS
 
 
 def format_kzmode(mode, form="full") -> int | str:

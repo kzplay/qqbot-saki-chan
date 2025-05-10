@@ -3,6 +3,7 @@ from datetime import datetime
 from textwrap import dedent
 
 import aiohttp
+import httpx
 from nonebot import on_command, Bot, logger
 from nonebot.adapters.onebot.v11 import MessageEvent as Event, Message, MessageSegment, GroupMessageEvent, \
     PrivateMessageEvent
@@ -10,15 +11,15 @@ from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 
 from .kzglobal import group_map_names, DEFAULT_MAP, private_map_names
-from ..api_call.dataclasses import LeaderboardData
-from ..api_call.helper import fetch_get
-from ..bot_utils.command_helper import CommandData
-from ..database.deps import SessionDep
-from ..database.models import User
-from ..utils.formatter import format_gruntime, diff_seconds_to_time
-from ..utils.kreedz import search_map
-from ..utils.kz.records import count_servers
-from ..utils.steam_user import convert_steamid
+from ..api.dataclasses import LeaderboardData
+from ..api.helper import fetch_json
+from src.plugins.gokz.core.command_helper import CommandData
+from ..db.deps import SessionDep
+from ..db.models import User
+from src.plugins.gokz.core.formatter import format_gruntime, diff_seconds_to_time
+from src.plugins.gokz.core.kreedz import search_map
+from src.plugins.gokz.core.kz.records import count_servers
+from src.plugins.gokz.core.steam_user import convert_steamid
 
 BASE = "https://api.gokz.top/"
 
@@ -43,7 +44,7 @@ async def _(bot: Bot, session: SessionDep, event: GroupMessageEvent):
             continue
         url = f'{BASE}leaderboard/{user.steamid}?mode=kz_timer'
         try:
-            rank_data = await fetch_get(url, timeout=10)
+            rank_data = await fetch_json(url, timeout=10)
             # if rank_data.get('detail'):
             #     return await rank.finish(MessageSegment.reply(event.message_id) + rank_data.get('detail'))
             data = LeaderboardData.from_dict(rank_data)
@@ -68,7 +69,7 @@ async def _(bot: Bot, session: SessionDep, event: GroupMessageEvent):
 @find.handle()
 async def find_handle(event: Event, args: Message = CommandArg()):
     if name := args.extract_plain_text():
-        players = await fetch_get(f"https://api.gokz.top/leaderboard/search/{name}?mode=kz_timer")
+        players = await fetch_json(f"https://api.gokz.top/leaderboard/search/{name}?mode=kz_timer")
         players = [LeaderboardData.from_dict(player) for player in players]
 
         content = '════查找玩家════\n'
@@ -93,10 +94,10 @@ async def pk_handle(bot: Bot, event: Event, args: Message = CommandArg()):
     # 未提供参数默认比较ank
     if not cd.args:
         try:
-            rank1_data = await fetch_get(f'{BASE}leaderboard/{cd.steamid}?mode={cd.mode}')
+            rank1_data = await fetch_json(f'{BASE}leaderboard/{cd.steamid}?mode={cd.mode}')
             rank1 = LeaderboardData.from_dict(rank1_data)
 
-            rank2_data = await fetch_get(f'{BASE}leaderboard/{cd.steamid2}?mode={cd.mode}')
+            rank2_data = await fetch_json(f'{BASE}leaderboard/{cd.steamid2}?mode={cd.mode}')
             rank2 = LeaderboardData.from_dict(rank2_data)
         except aiohttp.ClientError:
             return await bot.send(event, "无法访问排行榜服务，请稍后再试。")
@@ -176,7 +177,7 @@ async def check_cheng_fen(event: Event, args: Message = CommandArg()):
         if cd.args[0] == 'all':
             url = f'{BASE}records/{cd.steamid}?mode={cd.mode}'
 
-    records = await fetch_get(url)
+    records = await fetch_json(url)
     data = count_servers(records, limit=10)
     content = dedent(f"""
         ════成分查询════
@@ -193,13 +194,17 @@ async def check_cheng_fen(event: Event, args: Message = CommandArg()):
 @rank.handle()
 async def gokz_top_rank(event: Event, args: Message = CommandArg()):
     cd = CommandData(event, args)
+    print(cd.update)
     if cd.error:
         return await rank.finish(MessageSegment.reply(event.message_id) + cd.error)
+
+    if cd.update:
+        httpx.put(f'http://localhost:8000/leaderboard/{cd.steamid}?mode={cd.mode}')
 
     url = f'{BASE}leaderboard/{cd.steamid}?mode={cd.mode}'
     logger.warning(f"querying {url} failed")
     try:
-        rank_data = await fetch_get(url, timeout=10)
+        rank_data = await fetch_json(url, timeout=10)
         if rank_data.get('detail'):
             return await rank.finish(MessageSegment.reply(event.message_id) + rank_data.get('detail'))
         data = LeaderboardData.from_dict(rank_data)
@@ -250,7 +255,7 @@ async def map_progress(event: Event, args: Message = CommandArg()):
     query_url = (
         f"https://api.gokz.top/records/{cd.steamid}?mode={cd.mode}&map_name={map_name}"
     )
-    data = await fetch_get(query_url)
+    data = await fetch_json(query_url)
 
     if not data:
         return await progress.finish(MessageSegment.reply(event.message_id) + f"你尚未完成过{map_name}")

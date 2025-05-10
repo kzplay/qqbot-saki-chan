@@ -7,13 +7,13 @@ from nonebot import on_command, logger
 from nonebot.adapters.onebot.v11 import Bot, Event, Message, MessageSegment, GroupMessageEvent, PrivateMessageEvent
 from nonebot.params import CommandArg
 
-from ..api_call.kztimerglobal import fetch_personal_best, fetch_personal_recent, fetch_world_record, fetch_personal_bans
-from ..bot_utils.command_helper import CommandData
-from ..utils.config import MAP_TIERS
-from ..utils.formatter import format_gruntime, record_format_time
-from ..utils.kreedz import search_map
-from ..utils.kz.screenshot import vnl_screenshot_async, kzgoeu_screenshot_async, random_card
-from ..utils.map_img_url import get_map_img_url
+from ..api.kztimerglobal import fetch_personal_best, fetch_personal_recent, fetch_world_record, fetch_personal_bans
+from src.plugins.gokz.core.command_helper import CommandData
+from src.plugins.gokz.core.config import MAP_TIERS
+from src.plugins.gokz.core.formatter import format_gruntime, record_format_time
+from src.plugins.gokz.core.kreedz import search_map
+from src.plugins.gokz.core.kz.screenshot import vnl_screenshot_async, kzgoeu_screenshot_async
+from src.plugins.gokz.core.map_img_url import get_map_img_url
 
 pb = on_command('pb', aliases={'personal-best'})
 pr = on_command('pr')

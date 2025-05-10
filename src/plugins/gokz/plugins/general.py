@@ -4,15 +4,15 @@ from pathlib import Path
 from textwrap import dedent
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent as Event, Message, MessageSegment, GroupMessageEvent, PrivateMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent as Event, Message, MessageSegment
 from nonebot.params import CommandArg
 from sqlalchemy.exc import NoResultFound
 from sqlmodel import Session, select
 
-from ..database.db import engine, create_db_and_tables
-from ..database.models import User, Leaderboard
-from ..utils.kreedz import format_kzmode
-from ..utils.steam_user import convert_steamid
+from ..db.db import engine, create_db_and_tables
+from ..db.models import User, Leaderboard
+from src.plugins.gokz.core.kreedz import format_kzmode
+from src.plugins.gokz.core.steam_user import convert_steamid
 
 create_db_and_tables()
 
@@ -76,6 +76,7 @@ async def bind_steamid(bot: Bot, event: Event, args: Message = CommandArg()):
     content = dedent(f"""
         绑定成功 {rank.name}!
         {user.steamid}
+        请勿绑定他人的steamid, 否则可能会被拉黑
     """).strip()
 
     await bind.finish(MessageSegment.reply(event.message_id) + content)
@@ -107,8 +108,8 @@ async def update_mode(event: Event, args: Message = CommandArg()):
 
 @test.handle()
 async def handle_first_receive(bot: Bot, event: Event, args: Message = CommandArg()):
-    atmsg = event.get_message().copy()
-    for segment in atmsg:
+    at_msg = event.get_message().copy()
+    for segment in at_msg:
         if segment.type == 'at':
             return await bot.send(event, segment.data['qq'])
 

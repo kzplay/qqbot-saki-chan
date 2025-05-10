@@ -3,7 +3,7 @@ import asyncio
 import aiohttp
 
 
-async def fetch_get(*urls, params=None, timeout=15):
+async def fetch_json(*urls, params=None, timeout=15):
     async def fetch(session_, url_):
         async with session_.get(url_, params=params) as response:
             return await response.json()

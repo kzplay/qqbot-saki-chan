@@ -6,10 +6,10 @@ from typing import Optional, Tuple
 
 from sqlmodel import Session
 
-from ..database.db import engine
-from ..database.models import User
-from ..utils.kreedz import format_kzmode
-from ..utils.steam_user import convert_steamid
+from src.plugins.gokz.db.db import engine
+from src.plugins.gokz.db.models import User
+from src.plugins.gokz.core.kreedz import format_kzmode
+from src.plugins.gokz.core.steam_user import convert_steamid
 
 
 @dataclass

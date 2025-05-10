@@ -3,7 +3,7 @@ from typing import Generator, Annotated
 from nonebot.internal.params import Depends
 from sqlmodel import Session
 
-from ..database.db import engine
+from ..db.db import engine
 
 
 def get_db() -> Generator[Session, None, None]:

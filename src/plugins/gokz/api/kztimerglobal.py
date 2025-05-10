@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from src.plugins.gokz.utils.kreedz import format_kzmode
-from src.plugins.gokz.utils.steam_user import convert_steamid
-from ..api_call.helper import fetch_get
+from src.plugins.gokz.core.kreedz import format_kzmode
+from src.plugins.gokz.core.steam_user import convert_steamid
+from ..api.helper import fetch_json
 
 GLOBAL_API_URL = "https://kztimerglobal.com/api/v2.0/"
 
@@ -17,7 +17,7 @@ async def fetch_global_stats(steamid64, mode_str, has_tp=True) -> list:
         'limit': 10000,
         'has_teleports': str(has_tp).lower(),
     }
-    data = await fetch_get(f"{GLOBAL_API_URL}records/top", params=params)
+    data = await fetch_json(f"{GLOBAL_API_URL}records/top", params=params)
     return data
 
 
@@ -49,7 +49,7 @@ async def fetch_personal_best(steamid64, map_name, mode='kzt', has_tp=True):
     }
 
     url = "https://kztimerglobal.com/api/v2.0/records/top"
-    data = await fetch_get(url, params=params)
+    data = await fetch_json(url, params=params)
     if data:
         return data[0]
     else:
@@ -64,7 +64,7 @@ async def fetch_personal_bans(steamid64):
     }
 
     url = "https://kztimerglobal.com/api/v2.0/bans"
-    data = await fetch_get(url, params=params)
+    data = await fetch_json(url, params=params)
     if data:
         return data
     else:
@@ -81,7 +81,7 @@ async def fetch_world_record(map_name, mode='kzt', has_tp=True):
         'place_top_at_least': 1
     }
 
-    data = await fetch_get(f"{GLOBAL_API_URL}records/top/recent", params=params)
+    data = await fetch_json(f"{GLOBAL_API_URL}records/top/recent", params=params)
     return data[0]
 
 

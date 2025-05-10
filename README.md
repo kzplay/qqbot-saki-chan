@@ -1,7 +1,7 @@
-# gokz-qqbot
+# qqbot-saki-chan
 
 >  该机器人支持添加到好友列表私聊命令使用, 机器人会自动同意
-> 也可以拉到其他群里使用(偶尔会自动同意)
+> 也可以拉到其他群里使用
 
 ### 通用指定参数:
 
@@ -39,14 +39,3 @@
 - `/mp`| `/mapprogress` |`/进度 <map_name>` 查询玩家在某张地图上的进步情况
 -  `/ccf` | `/查成分` 查询玩家游玩最多的服务器
 - `/find <name>` 通过昵称查找玩家(注意这个并不是实时更新)
-
-## How to start
-
-1. generate project using `nb create` .
-2. create your plugin using `nb plugin create` .
-3. writing your plugins under `src/plugins` folder.
-4. run your bot using `nb run --reload` .
-
-## Documentation
-
-See [Docs](https://nonebot.dev/)

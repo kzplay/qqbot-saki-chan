@@ -14,9 +14,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-from src.plugins.gokz.utils.file_oper import check_last_modified_date
-from src.plugins.gokz.utils.kreedz import format_kzmode
-from src.plugins.gokz.utils.steam_user import convert_steamid
+from src.plugins.gokz.core.file_oper import check_last_modified_date
+from src.plugins.gokz.core.kreedz import format_kzmode
+from src.plugins.gokz.core.steam_user import convert_steamid
 
 require("nonebot_plugin_localstore")
 
