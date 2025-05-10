@@ -103,7 +103,7 @@ async def gokz_top_rank(event: Event, args: Message = CommandArg()):
         上次更新:　{data.updated_on.replace('T', ' ')}
         """
     ).strip()
-    return await rank.finish(content)
+    return await rank.finish('\n' + content)
 
 
 @progress.handle()

@@ -6,8 +6,10 @@ from zoneinfo import ZoneInfo
 from nonebot import on_command, logger
 from nonebot.adapters.qq import Bot, Event, Message, MessageSegment
 from nonebot.params import CommandArg
+from nonebot.permission import SUPERUSER
 
-from ..api.kztimerglobal import fetch_personal_best, fetch_personal_recent, fetch_world_record, fetch_personal_bans
+from ..api.kztimerglobal import fetch_personal_best, fetch_personal_recent, fetch_world_record, fetch_personal_bans, \
+    update_map_data
 from src.plugins.gokz.core.command_helper import CommandData
 from src.plugins.gokz.core.config import MAP_TIERS
 from src.plugins.gokz.core.formatter import format_gruntime, record_format_time
@@ -20,11 +22,18 @@ pr = on_command('pr')
 kz = on_command('kz', aliases={'kzgo'})
 wr = on_command('wr')
 ban_ = on_command('ban')
+update_map_info = on_command('update_map', permission=SUPERUSER)
 
 private_map_names: dict[int, str] = {}  # For private messages
 group_map_names: dict[int, str] = {}  # For group messages
 
 DEFAULT_MAP = 'bkz_cakewalk'
+
+
+@update_map_info.handle()
+async def _():
+    await update_map_data()
+    await update_map_info.finish('更新完成')
 
 
 def convert_to_shanghai_time(date_str):

@@ -1,10 +1,29 @@
+import json
+import subprocess
 from datetime import datetime
+from pathlib import Path
 
 from src.plugins.gokz.core.kreedz import format_kzmode
 from src.plugins.gokz.core.steam_user import convert_steamid
 from ..api.helper import fetch_json
 
 GLOBAL_API_URL = "https://kztimerglobal.com/api/v2.0/"
+
+
+async def update_map_data():
+    url = f"{GLOBAL_API_URL}maps?limit=2000"
+    save_path = Path("data/gokz_maps_data.json")
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # fetch and save json
+    data = await fetch_json(url)
+    with save_path.open("w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    # git pull the map-images repo
+    repo_path = Path("data/map-images")
+    if repo_path.exists():
+        subprocess.run(["git", "pull"], cwd=repo_path, check=True)
 
 
 async def fetch_global_stats(steamid64, mode_str, has_tp=True) -> list:
